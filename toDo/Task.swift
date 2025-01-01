@@ -11,7 +11,7 @@ import Foundation
 enum TaskStatus: String, CaseIterable, Codable{
     case nueva = "Nueva"
     case enProceso = "En Proceso"
-    case terminada = "Terminada" 
+    case terminada = "Terminada"  
 }
 extension TaskStatus {
     var color: Color {

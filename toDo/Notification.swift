@@ -8,7 +8,7 @@
 import UserNotifications
 
 func programarNotificacion(for task: Task) {
-    guard let dueDate = task.dueDate else { return }
+    guard let dueDate = task.dueDate else { return } 
     
     let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: dueDate)
     let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)

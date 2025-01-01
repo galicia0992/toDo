@@ -10,7 +10,7 @@ import UserNotifications
 
 
 struct TareasApp: App {
-    init() {
+    init() { 
         // Solicitar permiso para notificaciones
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if let error = error {

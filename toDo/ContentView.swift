@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var tasks: [Task] = []
     @State private var newTaskTitle: String = ""
-    @State private var newTaskDate: Date = Date()
+    @State private var newTaskDate: Date = Date() 
     
     
     func addTask() {
