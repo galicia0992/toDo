@@ -31,10 +31,12 @@ struct Task: Identifiable, Codable, Equatable {
     let id: UUID
     var title: String
     var status: TaskStatus
+    var dueDate: Date?
     
-    init(title: String, status: TaskStatus = .nueva){
+    init(title: String, status: TaskStatus = .nueva, dueDate: Date?){
         self.id = UUID()
         self.title = title
         self.status = status
+        self.dueDate = dueDate
     }
 }

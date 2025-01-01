@@ -10,16 +10,19 @@ import SwiftUI
 struct ContentView: View {
     @State private var tasks: [Task] = []
     @State private var newTaskTitle: String = ""
+    @State private var newTaskDate: Date = Date()
+    
     
     func addTask() {
         guard !newTaskTitle.isEmpty else { return }
-        let task = Task(title: newTaskTitle)
+        let task = Task(title: newTaskTitle, status: .nueva, dueDate: newTaskDate)
         tasks.append(task)
+        programarNotificacion(for: task)
         newTaskTitle = ""
     }
     
     func deleteTask(at offsets: IndexSet){
-        tasks.remove(atOffsets: offsets)
+        tasks.remove(atOffsets: offsets) 
     }
     
     func loadTask(){
@@ -37,16 +40,23 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             VStack {
-                HStack {
-                    TextField("Escribe una tarea nueva", text: $newTaskTitle)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding()
+                VStack {
+                    HStack{
+                        TextField("Escribe una tarea nueva", text: $newTaskTitle)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding()
+                        
+                        Button(action: addTask){
+                            Image(systemName: "plus.circle.fill")
+                                .font(.largeTitle)
+                                .foregroundColor(.blue)
+                            }
+                    }
                     
-                    Button(action: addTask){
-                        Image(systemName: "plus.circle.fill")
-                            .font(.largeTitle)
-                            .foregroundColor(.blue)
-                        }
+                    DatePicker("Fecha y hora", selection: $newTaskDate, in: Date()..., displayedComponents: [.date, .hourAndMinute])
+                        .labelsHidden()
+                        .padding(.bottom, 10)
+                
                 }
                 List{
                     ForEach($tasks){
@@ -73,6 +83,11 @@ struct ContentView: View {
             }
             .navigationTitle("Mis Tareas")
             .onAppear{
+                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                        if let error = error {
+                            print("Error al solicitar permisos: \(error.localizedDescription)")
+                        }
+                    }
                 loadTask()
             }
             .onChange(of: tasks) { _ in saveTask()}
