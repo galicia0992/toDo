@@ -36,6 +36,11 @@ struct ContentView: View {
             UserDefaults.standard.set(encodedTasks, forKey: "tasks")
         }
     }
+    func formattedDate(_ date: Date) -> String {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm, dd/MM/yyyy" // Formato para mostrar la hora y fecha
+            return formatter.string(from: date)
+        }
     
     var body: some View {
         NavigationView{
@@ -58,21 +63,41 @@ struct ContentView: View {
                         .padding(.bottom, 10)
                 
                 }
-                List{
-                    ForEach($tasks){
-                        $task in HStack(){
-                            Circle()
-                                .fill(task.status.color)
-                                .frame(width: 12, height: 12)
+                List {
+                    ForEach($tasks) { $task in
+                        HStack {
                             
-                            Text(task.title)
-                                .foregroundColor(task.status.color)
+                            // Título de la tarea
+                            VStack(alignment: .leading) {
+                                HStack{
+                                    Circle()
+                                        .fill(task.status.color)
+                                        .frame(width: 12, height: 12)
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                                       Text(task.title)
+                                                           .foregroundColor(task.status.color)
+                                                           .lineLimit(1) // Limita el texto a una sola línea
+                                                           .fixedSize(horizontal: true, vertical: false) // Evita que el texto se recorte
+                                                            .padding(.trailing) // Da algo de espacio para el texto largo
+                                                   }
+                                }// Esto limita el texto a una sola línea si es muy largo
+                                
+                                // Fecha de vencimiento
+                                if let dueDate = task.dueDate {
+                                    Text("\(formattedDate(dueDate))")
+                                        .font(.footnote)
+                                        .foregroundColor(.gray)
+                                        .fixedSize() // Esto asegura que la fecha se ajuste en su propio tamaño sin cambiar
+                                }
+                            }
                             
                             Spacer()
+                           
                             
-                            Picker(" ", selection: $task.status){
-                                ForEach(TaskStatus.allCases, id: \.self){
-                                    status in Text(status.rawValue).tag(status)
+                            // Picker para el estado de la tarea
+                            Picker(" ", selection: $task.status) {
+                                ForEach(TaskStatus.allCases, id: \.self) { status in
+                                    Text(status.rawValue).tag(status)
                                 }
                             }
                             .pickerStyle(MenuPickerStyle())
@@ -80,6 +105,8 @@ struct ContentView: View {
                     }
                     .onDelete(perform: deleteTask)
                 }
+
+
             }
             .navigationTitle("Mis Tareas")
             .onAppear{
